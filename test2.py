@@ -191,9 +191,8 @@ class BPNeuralNetwork:
         weight_file = open(str_wei,"wb")
         pickle.dump([self.input_weights,self.output_weights],weight_file)
         weight_file.close()
-#if __name__ == '__main__':
-#nn = BPNeuralNetwork()
-#nn.test()
+
+
 nn = BPNeuralNetwork()
 nn.test()
 nn.save("weights2.pickle")
