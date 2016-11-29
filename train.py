@@ -9,8 +9,8 @@ import pickle,pprint
 import numpy as np
 import random
 #from sklearn.neural_network import BernoulliRBM
-import theano
-import theano.tensor as T
+#import theano
+#import theano.tensor as T
 
 train_file_string = "train_forstu.pickle"
 valid_file_string = "valid_forstu.pickle"
@@ -32,12 +32,12 @@ a1 = a1[index_train]
 a11 = np.zeros([num_train,6])
 
 for i in range(0,num_train):
-    a11[i,a1[i]] = 1
+    a11[i,int(a1[i])] = 1
 
 train_X = a0;
 train_y = a11;
 
-
+'''
 #设置参数  
 num_example = num_train
 nn_input_dim=256 #输入神经元个数  
@@ -96,3 +96,4 @@ def build_model(num_passes=20000,print_loss=False):
         gradient_step(train_X,train_y)  
         if print_loss and i%1000==0:  
             print ("Loss after iteration %i: %f" ,(i,calculate_loss(train_X,train_y))) 
+'''
