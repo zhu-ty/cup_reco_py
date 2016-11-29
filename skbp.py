@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Nov 29 14:55:05 2016
+Created on Tue Nov 29 21:57:16 2016
 
-@author: mic
+@author: ShadowK
 """
-
 import random
 import math
 import pickle
@@ -29,7 +28,7 @@ def sigmoid(x):
 def sigmod_derivate(x):
     return x * (1 - x)
 
-class BPNeuralNetwork:
+class skr:
     def __init__(self):
         self.input_n = 0
         self.hidden_n = 0
@@ -41,6 +40,56 @@ class BPNeuralNetwork:
         self.output_weights = []
         self.input_correction = []
         self.output_correction = []
+        self.iters_ = 0
+        self.learn_ = 0
+        self.correct_ = 0
+        
+    def init(self, input_num, output_num, hidden = 100, iters = 10,learn = 0.05, correct = 0.1):
+        self.setup(input_num, hidden, output_num)
+        self.iters_ = iters
+        self.learn_ = learn
+        self.correct_ = correct
+        
+    def train(self, train_data, valid_data, model__):
+        #print("start")
+        num_samples = train_data[0].shape[0]
+        a11 = np.zeros([num_samples, self.output_n])
+        for i in range(0, num_samples):
+            a11[i, int(train_data[1][i])] = 1
+        print("start train iter %d"%self.iters_)
+        self.train_(train_data[0], a11, self.iters_, self.learn_, self.correct_)
+        i = 0;
+        x = np.zeros([valid_data[0].shape[0], self.output_n])
+        y = np.zeros([valid_data[0].shape[0], 1])
+        cor = 0
+        err = 0
+        for case in valid_data[0]:
+            #print(self.predict(case))
+            x[i,:] = self.predict_(case)
+            y[i] = (np.where(x[i,:] == x[i,:].max()))[0][0]
+            if(y[i] == valid_data[1][i]):
+                cor = cor + 1
+            else:
+                err = err + 1
+            i = i + 1
+        weight_file = open(model__,"wb")
+        pickle.dump([self.input_weights,self.output_weights],weight_file)
+        weight_file.close()
+        return (cor/(cor+err))
+        
+    def predict(self, valid_data, model__):
+        model_ = open(model__,"rb")
+        self.input_weights,self.output_weights = pickle.load(model_, encoding = "latin1")
+        model_.close()
+        i = 0;
+        x = np.zeros([valid_data[0].shape[0], self.output_n])
+        y = np.zeros([valid_data[0].shape[0]])
+        for case in valid_data[0]:
+            #print(self.predict(case))
+            x[i,:] = self.predict_(case)
+            y[i] = (np.where(x[i,:] == x[i,:].max()))[0][0]
+            i = i + 1
+        return y
 
     def setup(self, ni, nh, no):
         self.input_n = ni + 1
@@ -64,7 +113,7 @@ class BPNeuralNetwork:
         self.input_correction = make_matrix(self.input_n, self.hidden_n)
         self.output_correction = make_matrix(self.hidden_n, self.output_n)
 
-    def predict(self, inputs):
+    def predict_(self, inputs):
         # activate input layer
         for i in range(self.input_n - 1):
             self.input_cells[i] = inputs[i]
@@ -84,7 +133,7 @@ class BPNeuralNetwork:
 
     def back_propagate(self, case, label, learn, correct):
         # feed forward
-        self.predict(case)
+        self.predict_(case)
         # get output layer error
         output_deltas = [0.0] * self.output_n
         for o in range(self.output_n):
@@ -115,86 +164,12 @@ class BPNeuralNetwork:
             error += 0.5 * (label[o] - self.output_cells[o]) ** 2
         return error
 
-    def train(self, cases, labels, limit=10000, learn=0.05, correct=0.1):
-        for i in range(limit):
+    def train_(self, cases, labels, limit=10000, learn=0.05, correct=0.1):
+        for j in range(limit):
             error = 0.0
             for i in range(len(cases)):
                 label = labels[i]
                 case = cases[i]
                 error += self.back_propagate(case, label, learn, correct)
-            print(str(error))
-
-    def test(self):
-        train_file_string = "train_forstu.pickle"
-        #valid_file_string = "valid_forstu.pickle"
-        train_file = open(train_file_string, "rb")
-        #valid_file = open(valid_file_string,"rb")
-        
-        a = pickle.load(train_file,encoding = "latin1")
-        #b = pickle.load(valid_file,encoding = "latin1")
-        train_file.close();
-        #valid_file.close();
-        a0 = a[0]
-        a1 = a[1]
-        num_train = a0.shape[0]
-        index_train = np.array(range(num_train))
-        random.shuffle(index_train)
-        a0 = a0[index_train,:]
-        a1 = a1[index_train]
-        
-        a11 = np.zeros([num_train,6])
-        
-        for i in range(0,num_train):
-            a11[i,int(a1[i])] = 1
-        
-        train_X = a0;
-        train_y = a11;
-        self.setup(256,100,6)
-        self.train(train_X, train_y, 20, 0.05, 0.1)
-        #for case in cases:
-            #print(self.predict(case))
-            
-    def mine(self,str_wei):
-        weight_file_string = str_wei
-        weight_file = open(weight_file_string,"rb")
-        weight = pickle.load(weight_file,encoding = "latin1")
-        weight_file.close()
-        
-        self.setup(256,100,6)
-        
-        self.input_weights = weight[0]
-        self.output_weights = weight[1]
-        
-        valid_file_string = "valid_forstu.pickle"
-        valid_file = open(valid_file_string,"rb")
-        b = pickle.load(valid_file,encoding = "latin1")
-        valid_file.close()
-        i = 0;
-        x = np.zeros([b[0].shape[0],6])
-        y = np.zeros([b[0].shape[0],1])
-        cor = 0
-        err = 0
-        for case in b[0]:
-            #print(self.predict(case))
-            x[i,:] = self.predict(case)
-            y[i] = (np.where(x[i,:] == x[i,:].max()))[0][0]
-            #print(i)
-            if(y[i] == b[1][i]):
-                cor = cor + 1
-            else:
-                err = err + 1
-            i = i + 1
-        print(cor/(cor+err))
-        return y
-            
-    def save(self,str_wei):
-        weight_file = open(str_wei,"wb")
-        pickle.dump([self.input_weights,self.output_weights],weight_file)
-        weight_file.close()
-
-
-nn = BPNeuralNetwork()
-nn.test()
-nn.save("weights2.pickle")
-xy = nn.mine("weights2.pickle")
-    
+            print("iter : %d"%j)
+            print("error : %f"%error)
