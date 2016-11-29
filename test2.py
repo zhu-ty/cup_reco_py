@@ -125,26 +125,15 @@ class BPNeuralNetwork:
             print(str(error))
 
     def test(self):
-        """
-        cases = [
-            [0, 0],
-            [0, 1],
-            [1, 0],
-            [1, 1],
-        ]
-        labels = [[0], [1], [1], [0]]
-        self.setup(2, 5, 1)
-        self.train(cases, labels, 10000, 0.05, 0.1)
-        """
         train_file_string = "train_forstu.pickle"
-        valid_file_string = "valid_forstu.pickle"
+        #valid_file_string = "valid_forstu.pickle"
         train_file = open(train_file_string, "rb")
-        valid_file = open(valid_file_string,"rb")
+        #valid_file = open(valid_file_string,"rb")
         
         a = pickle.load(train_file,encoding = "latin1")
         #b = pickle.load(valid_file,encoding = "latin1")
         train_file.close();
-        valid_file.close();
+        #valid_file.close();
         a0 = a[0]
         a1 = a[1]
         num_train = a0.shape[0]
@@ -161,10 +150,52 @@ class BPNeuralNetwork:
         train_X = a0;
         train_y = a11;
         self.setup(256,100,6)
-        self.train(train_X, train_y, 10, 0.05, 0.1)
+        self.train(train_X, train_y, 20, 0.05, 0.1)
         #for case in cases:
             #print(self.predict(case))
+            
+    def mine(self,str_wei):
+        weight_file_string = str_wei
+        weight_file = open(weight_file_string,"rb")
+        weight = pickle.load(weight_file,encoding = "latin1")
+        weight_file.close()
         
-if __name__ == '__main__':
-    nn = BPNeuralNetwork()
-    nn.test()
+        self.setup(256,100,6)
+        
+        self.input_weights = weight[0]
+        self.output_weights = weight[1]
+        
+        valid_file_string = "valid_forstu.pickle"
+        valid_file = open(valid_file_string,"rb")
+        b = pickle.load(valid_file,encoding = "latin1")
+        valid_file.close()
+        i = 0;
+        x = np.zeros([b[0].shape[0],6])
+        y = np.zeros([b[0].shape[0],1])
+        cor = 0
+        err = 0
+        for case in b[0]:
+            #print(self.predict(case))
+            x[i,:] = self.predict(case)
+            y[i] = (np.where(x[i,:] == x[i,:].max()))[0][0]
+            #print(i)
+            if(y[i] == b[1][i]):
+                cor = cor + 1
+            else:
+                err = err + 1
+            i = i + 1
+        print(cor/(cor+err))
+        return y
+            
+    def save(self,str_wei):
+        weight_file = open(str_wei,"wb")
+        pickle.dump([self.input_weights,self.output_weights],weight_file)
+        weight_file.close()
+#if __name__ == '__main__':
+#nn = BPNeuralNetwork()
+#nn.test()
+nn = BPNeuralNetwork()
+nn.test()
+nn.save("weights2.pickle")
+xy = nn.mine("weights2.pickle")
+    
