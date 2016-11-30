@@ -2,6 +2,9 @@
 """
 Created on Tue Nov 29 21:57:16 2016
 
+reference:
+    http://www.cnblogs.com/Finley/p/5946000.html
+
 @author: ShadowK
 """
 import random

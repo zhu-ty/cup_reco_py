@@ -15,12 +15,14 @@ random.seed(0)
 import sksvm_linear as sksl
 import sksvm_poly as sksp
 import skbp
+import sksoftmax as sksm
 
 def usage():
     print("An example:")
-    print("python recognizer.py -t [--svml | --svmp | --skbp] [--ti data/train_forstu.pickle] [--tv data/valid_forstu.pickle] [--to model/svm.model | model/bp.model]")
-    print("python recognizer.py -p [--svml | --svmp | --skbp] [-i data/valid_forstu.pickle] [-o output/predict.txt] [-m model/svm.model | model/bp.model]")
+    print("python recognizer.py -t [--svml | --svmp | --skbp | --sksm] [--ti data/train_forstu.pickle] [--tv data/valid_forstu.pickle] [--to model/model.model]")
+    print("python recognizer.py -p [--svml | --svmp | --skbp | --sksm] [-i data/valid_forstu.pickle] [-o output/predict.txt] [-m model/model.model]")
     print("Sample:")
+    print("python recognizer.py -t --sksm --ti data/train_forstu.pickle --tv data/valid_forstu.pickle --to model/softmax.model")
     print("python recognizer.py -p --bpsk -i data/valid_forstu.pickle -o output/predict.txt -m model/bp.model")
     return
 
@@ -31,7 +33,7 @@ if(sys.argv[1:] == []):
     usage()
     sys.exit(0)
     
-opts, args = getopt.getopt(sys.argv[1:], "tpi:o:m:",["svml","svmp","skbp","bp_iter=","ti=","to=","tv="])
+opts, args = getopt.getopt(sys.argv[1:], "tpi:o:m:",["svml","svmp","sksm","skbp","bp_iter=","ti=","to=","tv="])
 
 mode = 0
 method = 0
@@ -62,6 +64,8 @@ for op, value in opts:
         method = 2
     elif op == "--skbp":
         method = 3
+    elif op == "--sksm":
+        method = 4
     elif op == "--ti":
         train_dataset__ = value
     elif op == "--tv":
@@ -98,6 +102,9 @@ elif method == 2:
 elif method == 3:
     skr = skbp.skr()
     skr.init(256, 6, 100, bp_iter)
+elif method == 4:
+    skr = sksm.skr()
+    skr.init(256, 6)
 #print("test1")    
 
 if mode == 1:

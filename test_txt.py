@@ -8,7 +8,7 @@ import pickle
 import numpy as np
 
 valid__ = "data/valid_forstu.pickle"
-txt__ = "output/predict_bp.txt"
+txt__ = "output/predict_softmax.txt"
 
 valid_ = open(valid__,"rb")
 txt_ = open(txt__,"r")
