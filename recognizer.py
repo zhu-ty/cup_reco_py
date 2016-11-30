@@ -31,10 +31,11 @@ if(sys.argv[1:] == []):
     usage()
     sys.exit(0)
     
-opts, args = getopt.getopt(sys.argv[1:], "tpi:o:m:",["svml","svmp","skbp","ti=","to=","tv="])
+opts, args = getopt.getopt(sys.argv[1:], "tpi:o:m:",["svml","svmp","skbp","bp_iter=","ti=","to=","tv="])
 
 mode = 0
 method = 0
+bp_iter = 10
 
 train_dataset__ = ""
 valid_dataset__ = ""
@@ -69,6 +70,8 @@ for op, value in opts:
         data__ = value
     elif op == "-o":
         output__ = value
+    elif op == "--bp_iter":
+        bp_iter = int(value)
     if(mode == 1):
         if op == "--to":
             model__ = value
@@ -88,12 +91,15 @@ ans = predict(valid_data, model__)
             
 if method == 1:
     skr = sksl.skr()
+    skr.init(256, 6)
 elif method == 2:
     skr = sksp.skr()
+    skr.init(256, 6)
 elif method == 3:
     skr = skbp.skr()
+    skr.init(256, 6, 100, bp_iter)
 #print("test1")    
-skr.init(256, 6)
+
 if mode == 1:
     train_data_ = open(train_dataset__,"rb")
     train_data = pickle.load(train_data_,encoding = "latin1")
