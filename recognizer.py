@@ -23,7 +23,7 @@ def usage():
     print("python recognizer.py -p [--svml | --svmp | --skbp | --sksm] [-i data/valid_forstu.pickle] [-o output/predict.txt] [-m model/model.model]")
     print("Sample:")
     print("python recognizer.py -t --sksm --ti data/train_forstu.pickle --tv data/valid_forstu.pickle --to model/softmax.model")
-    print("python recognizer.py -p --bpsk -i data/valid_forstu.pickle -o output/predict.txt -m model/bp.model")
+    print("python recognizer.py -p --skbp -i data/valid_forstu.pickle -o output/predict.txt -m model/bp.model")
     return
 
 
