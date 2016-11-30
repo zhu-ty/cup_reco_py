@@ -18,7 +18,7 @@ import skbp
 import sksoftmax as sksm
 
 def usage():
-    print("An example:")
+    print("Useage:")
     print("python recognizer.py -t [--svml | --svmp | --skbp | --sksm] [--ti data/train_forstu.pickle] [--tv data/valid_forstu.pickle] [--to model/model.model]")
     print("python recognizer.py -p [--svml | --svmp | --skbp | --sksm] [-i data/valid_forstu.pickle] [-o output/predict.txt] [-m model/model.model]")
     print("Sample:")

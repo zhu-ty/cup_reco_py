@@ -11,7 +11,7 @@ import random
 import math
 import pickle
 import numpy as np
-random.seed(0)
+random.seed()
 
 def rand(a, b):
     return (b - a) * random.random() + a

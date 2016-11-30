@@ -72,7 +72,7 @@ class skr:
         self.theta = [0]
         self.MAX_VAL = 0
     
-    def init(self, feature_num, label_mum, run_times = 3000, col = 1e-6, alfa = 0.4, lamda = 0.0):
+    def init(self, feature_num, label_mum, run_times = 2000, col = 1e-6, alfa = 0.4, lamda = 0.0):
         self.alfa = alfa  
         self.lamda = lamda  
         self.feature_num = feature_num  
